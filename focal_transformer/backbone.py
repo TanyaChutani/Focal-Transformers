@@ -21,5 +21,6 @@ class WindowAttention(tf.keras.layers.Layer):
 
         coords_h = tf.range(self.window_size[0]) - self.window_size[0] // 2
         coords_w = tf.range(self.window_size[1]) - self.window_size[1] // 2        
-        coords_window = tf.stack(tf.meshgrid([coords_h, coords_w]), dim=-1)
+        oords_window = tf.stack(tf.meshgrid([coords_h, coords_w]), dim=-1)
+        
         
