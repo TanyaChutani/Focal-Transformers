@@ -21,6 +21,15 @@ class WindowAttention(tf.keras.layers.Layer):
 
         coords_h = tf.range(self.window_size[0]) - self.window_size[0] // 2
         coords_w = tf.range(self.window_size[1]) - self.window_size[1] // 2        
-        oords_window = tf.stack(tf.meshgrid([coords_h, coords_w]), dim=-1)
-        
+        coords_window = tf.stack(tf.meshgrid([coords_h, coords_w]), dim=-1)
+        coords_flatten = coords_window.reshape(2, -1)
+        relative_coords = coords_flatten[:, :, None] - coords_flatten[:, None, :] 
+        relative_coords = relative_coords.transpose([1, 2, 0]) 
+        relative_coords[:, :, 0] += self.window_size[0] - 1 
+        relative_coords[:, :, 1] += self.window_size[1] - 1
+        relative_coords[:, :, 0] *= 2 * self.window_size[1] - 1
+        relative_position_idx = relative_coords.sum(-1)  
+        self.relative_position_index = tf.Variable(
+            initial_value=tf.convert_to_tensor(relative_position_idx), trainable=False
+        )        
         
